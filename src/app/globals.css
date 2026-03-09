@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Playful Storybook Theme */
+    --background: 45 20% 98%; /* #FDFCF8 - Soft Cream */
+    --foreground: 220 15% 20%; /* #2B303B - Soft Navy/Charcoal (easier on eyes than black) */
+    
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 20%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 20%;
+    
+    --primary: 190 80% 40%; /* #1491A8 - Ocean Teal (Friendly primary) */
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 35 90% 65%; /* #F7B558 - Sunny Yellow/Orange */
+    --secondary-foreground: 20 10% 10%;
+    
+    --muted: 45 10% 92%;
+    --muted-foreground: 220 10% 50%;
+    
+    --accent: 330 70% 60%; /* #D95383 - Berry/Pink (Fun accent) */
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 45 10% 85%;
+    --input: 45 10% 85%;
+    --ring: 190 80% 40%;
+    
+    --radius: 1rem; /* Rounder corners for friendliness */
+  }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 45 20% 96%;
+    
+    --card: 220 20% 14%;
+    --card-foreground: 45 20% 96%;
+    
+    --popover: 220 20% 14%;
+    --popover-foreground: 45 20% 96%;
+    
+    --primary: 190 70% 50%;
+    --primary-foreground: 220 20% 10%;
+    
+    --secondary: 35 90% 65%;
+    --secondary-foreground: 20 10% 10%;
+    
+    --muted: 220 20% 20%;
+    --muted-foreground: 220 10% 70%;
+    
+    --accent: 330 70% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 190 70% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}

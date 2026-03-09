@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Author {
+  id        String   @id @default(cuid())
+  name      String
+  bio       String?
+  avatarUrl String?
+  books     Book[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  image       String
+  amazonLink  String
+  tag         String?
+  authorId    String
+  author      Author   @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
