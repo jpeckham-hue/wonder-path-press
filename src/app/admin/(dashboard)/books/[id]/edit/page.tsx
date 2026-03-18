@@ -4,10 +4,11 @@ import Link from "next/link";
 import prisma from "@/lib/db";
 import { notFound } from "next/navigation";
 
-export default async function EditBookPage({ params }: { params: { id: string } }) {
+export default async function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const [book, authors] = await Promise.all([
     prisma.book.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     }),
     prisma.author.findMany({
       orderBy: { name: 'asc' }
@@ -33,3 +34,4 @@ export default async function EditBookPage({ params }: { params: { id: string } 
     </div>
   );
 }
+

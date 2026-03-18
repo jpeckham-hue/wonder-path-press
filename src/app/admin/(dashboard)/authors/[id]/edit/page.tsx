@@ -4,9 +4,10 @@ import Link from "next/link";
 import prisma from "@/lib/db";
 import { notFound } from "next/navigation";
 
-export default async function EditAuthorPage({ params }: { params: { id: string } }) {
+export default async function EditAuthorPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const author = await prisma.author.findUnique({
-    where: { id: params.id },
+    where: { id: id },
   });
 
   if (!author) {
@@ -28,3 +29,4 @@ export default async function EditAuthorPage({ params }: { params: { id: string 
     </div>
   );
 }
+
