@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { createBook, updateBook } from "@/app/admin/(dashboard)/books/actions";
 import Link from "next/link";
 import { Author } from "@prisma/client";
@@ -9,10 +9,33 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
   const [isPending, startTransition] = useTransition();
   const isEditing = !!initialData;
 
+  const [imageType, setImageType] = useState<"url" | "upload">(
+    initialData?.image?.startsWith("data:image") ? "upload" : "url"
+  );
+  const [base64Image, setBase64Image] = useState(
+    initialData?.image?.startsWith("data:image") ? initialData.image : ""
+  );
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64Image(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    // If using upload, replace the 'image' field with the base64 string
+    if (imageType === "upload" && base64Image) {
+      formData.set("image", base64Image);
+    }
+
     startTransition(() => {
       if (isEditing) {
         updateBook(initialData.id, formData);
@@ -90,16 +113,54 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
           </div>
         </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="image" className="text-sm font-medium">Cover Image URL *</label>
-          <input 
-            type="url" 
-            id="image" 
-            name="image" 
-            required
-            defaultValue={initialData?.image || ""}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          />
+        <div className="grid gap-4 p-4 border rounded-xl bg-card">
+          <div className="flex items-center justify-between">
+             <label className="text-sm font-medium">Cover Image *</label>
+             <div className="flex bg-muted rounded-md p-1">
+               <button 
+                  type="button" 
+                  onClick={() => setImageType("url")} 
+                  className={`text-xs px-3 py-1 rounded-sm font-medium transition-colors ${imageType === 'url' ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}
+               >
+                 Image URL
+               </button>
+               <button 
+                  type="button" 
+                  onClick={() => setImageType("upload")} 
+                  className={`text-xs px-3 py-1 rounded-sm font-medium transition-colors ${imageType === 'upload' ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}
+               >
+                 Upload File
+               </button>
+             </div>
+          </div>
+          
+          {imageType === "url" ? (
+             <input 
+               type="url" 
+               id="image" 
+               name="image" 
+               required
+               defaultValue={!initialData?.image?.startsWith("data:image") ? (initialData?.image || "") : ""}
+               placeholder="https://example.com/cover.jpg"
+               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+               onChange={() => {}}
+             />
+          ) : (
+             <div className="space-y-2">
+               <input 
+                 type="file" 
+                 id="imageUpload" 
+                 name="imageUpload" 
+                 accept="image/*"
+                 required={!base64Image && !isEditing}
+                 onChange={handleImageUpload}
+                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:pt-1 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+               />
+               {base64Image && (
+                  <p className="text-xs text-primary font-medium">Image queued for upload.</p>
+               )}
+             </div>
+          )}
         </div>
 
         <div className="grid gap-2">
@@ -110,7 +171,7 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
             name="amazonLink" 
             required
             defaultValue={initialData?.amazonLink || ""}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background mile:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
 
@@ -134,4 +195,3 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
     </form>
   );
 }
-
