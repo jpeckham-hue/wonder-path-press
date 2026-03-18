@@ -1,35 +1,41 @@
+import prisma from "@/lib/db";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+import { marked } from "marked";
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  // In a real app, fetch data based on params.slug
-  const post = {
-    title: "The Magic of Storytelling",
-    date: "October 12, 2025",
-    author: "Luna Bright",
-    category: "Writing",
-    image: "/blog-placeholder.png",
-    content: `
-      <p>Once upon a time, in a world not so different from our own, stories were the threads that held the universe together. For children, stories are more than just entertainment; they are the maps they use to navigate the complexities of life.</p>
-      <p>When we read to our children, we are doing more than teaching them literacy. We are teaching them empathy. We are showing them that it is possible to be brave in the face of dragons, and that kindness is a superpower that can change the world.</p>
-      <h3>Why Fairy Tales Matter</h3>
-      <p>Einstein once said, "If you want your children to be intelligent, read them fairy tales. If you want them to be more intelligent, read them more fairy tales."</p>
-      <p>Fairy tales operate on a level of deep symbolism. They speak to the unconscious mind, helping children resolve inner conflicts and understand the eternal struggle between good and evil, fear and courage.</p>
-    `
-  };
+export const dynamic = 'force-dynamic';
+
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+  // @ts-ignore
+  const { slug } = await params;
+  const post = await prisma.post.findUnique({
+    where: { slug: slug, published: true },
+    include: { author: true }
+  });
+
+  if (!post) {
+    notFound();
+  }
+
+  const contentHtml = await marked(post.content);
 
   return (
     <article className="min-h-screen bg-background pb-24">
       {/* Hero Image */}
       <div className="relative h-[400px] w-full bg-muted">
-        <Image
-          src={post.image}
-          alt={post.title}
-          fill
-          className="object-cover brightness-75"
-          priority
-        />
+        {post.coverImage ? (
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            fill
+            className="object-cover brightness-75"
+            priority
+          />
+        ) : (
+          <div className="absolute inset-0 bg-primary/20" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
             <div className="container px-4">
@@ -48,15 +54,20 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
             {/* Meta */}
             <div className="flex items-center justify-between border-b pb-8 mb-8 text-muted-foreground">
                 <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">LB</div>
+                    {post.author.avatarUrl ? (
+                      <div className="w-10 h-10 rounded-full bg-primary overflow-hidden relative">
+                         <Image src={post.author.avatarUrl} alt={post.author.name} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                        {post.author.name.charAt(0)}
+                      </div>
+                    )}
                     <div>
-                        <p className="text-sm font-bold text-foreground">{post.author}</p>
-                        <p className="text-xs">{post.date}</p>
+                        <p className="text-sm font-bold text-foreground">{post.author.name}</p>
+                        <p className="text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
                     </div>
                 </div>
-                <span className="px-3 py-1 bg-muted rounded-full text-xs font-bold uppercase tracking-wider">
-                    {post.category}
-                </span>
             </div>
 
             {/* Content */}
@@ -66,7 +77,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
                 prose-p:text-muted-foreground prose-p:leading-relaxed
                 prose-a:text-accent prose-a:no-underline hover:prose-a:underline
                 "
-                dangerouslySetInnerHTML={{ __html: post.content }} 
+                dangerouslySetInnerHTML={{ __html: contentHtml }} 
             />
         </div>
       </div>

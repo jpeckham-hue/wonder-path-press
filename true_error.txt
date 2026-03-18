@@ -1,8 +1,4 @@
-Gû¦ Next.js 16.1.4 (Turbopack)
-- Environments: .env
 
-  Creating an optimized production build ...
-System.Management.Automation.RemoteException
 > Build error occurred
 Error: Turbopack build failed with 2 errors:
 ./src/app/api/auth/login/route.ts:3:1
@@ -14,13 +10,13 @@ Module not found: Can't resolve '@/lib/session'
  [90m 4 |[39m
  [90m 5 |[39m [36mexport[39m [36masync[39m [36mfunction[39m [33mPOST[39m(req[33m:[39m [33mNextRequest[39m) {
  [90m 6 |[39m   [36mtry[39m {[0m
-System.Management.Automation.RemoteException
+
 Import map: aliased to relative './src/lib/session' inside of [project]/
-System.Management.Automation.RemoteException
-System.Management.Automation.RemoteException
+
+
 https://nextjs.org/docs/messages/module-not-found
-System.Management.Automation.RemoteException
-System.Management.Automation.RemoteException
+
+
 ./src/proxy.ts:3:1
 Module not found: Can't resolve '@/lib/session'
 [0m [90m 1 |[39m [36mimport[39m { [33mNextResponse[39m } [36mfrom[39m [32m'next/server'[39m[33m;[39m
@@ -30,13 +26,13 @@ Module not found: Can't resolve '@/lib/session'
  [90m 4 |[39m
  [90m 5 |[39m [36mexport[39m [36masync[39m [36mfunction[39m proxy(request[33m:[39m [33mNextRequest[39m) {
  [90m 6 |[39m   [36mif[39m (request[33m.[39mnextUrl[33m.[39mpathname[33m.[39mstartsWith([32m'/admin'[39m) [33m&&[39m [33m![39mrequest[33m.[39mnextUrl[33m.[39mpathname[33m.[39mstartsWith([32m'/admin/login'[39m)) {[0m
-System.Management.Automation.RemoteException
+
 Import map: aliased to relative './src/lib/session' inside of [project]/
-System.Management.Automation.RemoteException
-System.Management.Automation.RemoteException
+
+
 https://nextjs.org/docs/messages/module-not-found
-System.Management.Automation.RemoteException
-System.Management.Automation.RemoteException
+
+
     at <unknown> (./src/app/api/auth/login/route.ts:3:1)
     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
     at <unknown> (./src/proxy.ts:3:1)

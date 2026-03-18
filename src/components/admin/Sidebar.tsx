@@ -1,14 +1,15 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, PenTool, LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, BookOpen, PenTool, LogOut, Settings, Users } from "lucide-react";
 import clsx from "clsx";
 
 const MENU_ITEMS = [
+  { name: "Authors", href: "/admin/authors", icon: Users },
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Books", href: "/admin/books", icon: BookOpen },
-  { name: "Blog Posts", href: "/admin/posts", icon: PenTool },
+  { name: "Blog Posts", href: "/admin/blog", icon: PenTool },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

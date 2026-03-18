@@ -7,15 +7,33 @@ import { Lock } from "lucide-react";
 export default function AdminLogin() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    // Setting a fake authentication cookie for middleware demonstration
-    document.cookie = "admin_session=true; path=/; max-age=86400";
-    setTimeout(() => {
+    setError("");
+    
+    const formData = new FormData(e.currentTarget);
+    const password = formData.get("password");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Invalid password");
+      }
+
       router.push("/admin/dashboard");
-    }, 500);
+      router.refresh();
+    } catch (err) {
+      setError("Invalid password. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -69,6 +87,8 @@ export default function AdminLogin() {
               </div>
             </div>
           </div>
+
+          {error && <p className="text-sm font-medium text-red-500 text-center">{error}</p>}
 
           <button
             type="submit"

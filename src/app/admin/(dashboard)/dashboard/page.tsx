@@ -3,9 +3,10 @@ import prisma from "@/lib/db";
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const [totalBooks, totalAuthors] = await Promise.all([
+  const [totalBooks, totalAuthors, totalPosts] = await Promise.all([
     prisma.book.count(),
     prisma.author.count(),
+    prisma.post.count(),
   ]);
 
   return (
@@ -28,13 +29,10 @@ export default async function DashboardPage() {
             <span className="text-2xl font-bold">{totalAuthors}</span>
           </div>
         </div>
-        <div className="rounded-xl border bg-card p-6 shadow-sm opacity-50 relative group">
-          <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-[1px] rounded-xl opacity-0 hover:opacity-100 transition-opacity">
-            <span className="text-xs font-bold uppercase tracking-wider">Coming Soon</span>
-          </div>
+        <div className="rounded-xl border bg-card p-6 shadow-sm">
           <div className="flex flex-col space-y-1">
             <span className="text-sm font-medium text-muted-foreground">Blog Posts</span>
-            <span className="text-2xl font-bold">0</span>
+            <span className="text-2xl font-bold">{totalPosts}</span>
           </div>
         </div>
       </div>

@@ -1,0 +1,5 @@
+﻿src/app/admin/authors/[id]/edit/page.tsx(1,10): error TS2614: Module '"@/components/admin/AuthorForm"' has no exported member 'AuthorForm'. Did you mean to use 'import AuthorForm from "@/components/admin/AuthorForm"' instead?
+src/app/admin/authors/new/page.tsx(1,10): error TS2614: Module '"@/components/admin/AuthorForm"' has no exported member 'AuthorForm'. Did you mean to use 'import AuthorForm from "@/components/admin/AuthorForm"' instead?
+src/app/admin/books/actions.ts(16,60): error TS2552: Cannot find name 'mazonLink'. Did you mean 'amazonLink'?
+src/components/admin/AuthorForm.tsx(1,10): error TS2614: Module '"@/components/admin/AuthorForm"' has no exported member 'AuthorForm'. Did you mean to use 'import AuthorForm from "@/components/admin/AuthorForm"' instead?
+src/components/admin/DeleteBookButton.tsx(12,7): error TS2365: Operator '+' cannot be applied to types 'TransitionStartFunction' and '() => void'.
