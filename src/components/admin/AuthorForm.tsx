@@ -55,6 +55,7 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    formData.delete("avatarUpload");
     
     if (imageType === "upload" && base64Image) {
       formData.set("avatarUrl", base64Image);

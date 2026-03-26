@@ -56,6 +56,7 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    formData.delete("imageUpload");
     
     // If using upload, replace the 'image' field with the base64 string
     if (imageType === "upload" && base64Image) {
