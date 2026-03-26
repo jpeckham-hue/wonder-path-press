@@ -20,7 +20,33 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setBase64Image(reader.result as string);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          const MAX_SIZE = 800;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          setBase64Image(canvas.toDataURL("image/jpeg", 0.7)); // Compress to 70% JPEG
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -34,11 +60,16 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
       formData.set("avatarUrl", base64Image);
     }
 
-    startTransition(() => {
-      if (isEditing) {
-        updateAuthor(initialData.id, formData);
-      } else {
-        createAuthor(formData);
+    startTransition(async () => {
+      try {
+        if (isEditing) {
+          await updateAuthor(initialData.id, formData);
+        } else {
+          await createAuthor(formData);
+        }
+      } catch (error) {
+        alert("Failed to save author. Your connection may have been interrupted or the file is still too large.");
+        console.error(error);
       }
     });
   };

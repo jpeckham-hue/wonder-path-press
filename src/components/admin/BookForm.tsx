@@ -21,7 +21,33 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setBase64Image(reader.result as string);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          const MAX_SIZE = 800;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          setBase64Image(canvas.toDataURL("image/jpeg", 0.7));
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -36,11 +62,16 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
       formData.set("image", base64Image);
     }
 
-    startTransition(() => {
-      if (isEditing) {
-        updateBook(initialData.id, formData);
-      } else {
-        createBook(formData);
+    startTransition(async () => {
+      try {
+        if (isEditing) {
+          await updateBook(initialData.id, formData);
+        } else {
+          await createBook(formData);
+        }
+      } catch (error) {
+        alert("Failed to save book. Your connection may have been interrupted or the file is still too large.");
+        console.error(error);
       }
     });
   };
