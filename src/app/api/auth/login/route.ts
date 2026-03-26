@@ -2,25 +2,39 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createSession } from '@/lib/session';
 import crypto from 'crypto';
+import prisma from '@/lib/db';
+import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
   try {
-    const { password } = await req.json();
+    const { email, password } = await req.json();
 
-    const providedBuffer = Buffer.from(password || '');
-    const expectedBuffer = Buffer.from(process.env.ADMIN_PASSWORD || '');
-    
     let isMatch = false;
-    if (providedBuffer.length === expectedBuffer.length) {
-      isMatch = crypto.timingSafeEqual(providedBuffer, expectedBuffer);
+
+    // Fallback logic for global env superadmin (for bootstrapping the first user)
+    const expectedBuffer = Buffer.from(process.env.ADMIN_PASSWORD || '');
+    if (password && expectedBuffer.length > 0) {
+      const providedBuffer = Buffer.from(password);
+      if (providedBuffer.length === expectedBuffer.length) {
+         if (crypto.timingSafeEqual(providedBuffer, expectedBuffer)) {
+           isMatch = true;
+         }
+      }
+    }
+
+    // Database verification if global password doesn't match
+    if (!isMatch && email && password) {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (user) {
+        isMatch = await bcrypt.compare(password, user.password);
+      }
     }
 
     if (!isMatch) {
-      return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     const { session, expiresAt } = await createSession();
-    
     const response = NextResponse.json({ success: true });
     
     response.cookies.set({

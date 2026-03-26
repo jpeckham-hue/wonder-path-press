@@ -10,7 +10,7 @@ const MENU_ITEMS = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Books", href: "/admin/books", icon: BookOpen },
   { name: "Blog Posts", href: "/admin/blog", icon: PenTool },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+  { name: "Team Settings", href: "/admin/users", icon: Settings },
 ];
 
 export function AdminSidebar() {
