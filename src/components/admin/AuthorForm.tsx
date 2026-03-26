@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { createAuthor, updateAuthor } from "@/app/admin/(dashboard)/authors/actions";
 import Link from "next/link";
 
@@ -8,10 +8,32 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
   const [isPending, startTransition] = useTransition();
   const isEditing = !!initialData;
 
+  const [imageType, setImageType] = useState<"url" | "upload">(
+    initialData?.avatarUrl?.startsWith("data:image") ? "upload" : "url"
+  );
+  const [base64Image, setBase64Image] = useState(
+    initialData?.avatarUrl?.startsWith("data:image") ? initialData.avatarUrl : ""
+  );
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBase64Image(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    if (imageType === "upload" && base64Image) {
+      formData.set("avatarUrl", base64Image);
+    }
+
     startTransition(() => {
       if (isEditing) {
         updateAuthor(initialData.id, formData);
@@ -47,15 +69,52 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
           />
         </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="avatarUrl" className="text-sm font-medium">Avatar URL</label>
-          <input 
-            type="url" 
-            id="avatarUrl" 
-            name="avatarUrl" 
-            defaultValue={initialData?.avatarUrl || ""}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          />
+        <div className="grid gap-4 p-4 border rounded-xl bg-card">
+          <div className="flex items-center justify-between">
+             <label className="text-sm font-medium">Profile Image (Avatar URL)</label>
+             <div className="flex bg-muted rounded-md p-1">
+               <button 
+                  type="button" 
+                  onClick={() => setImageType("url")} 
+                  className={`text-xs px-3 py-1 rounded-sm font-medium transition-colors ${imageType === 'url' ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}
+               >
+                 Image URL
+               </button>
+               <button 
+                  type="button" 
+                  onClick={() => setImageType("upload")} 
+                  className={`text-xs px-3 py-1 rounded-sm font-medium transition-colors ${imageType === 'upload' ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}
+               >
+                 Upload File
+               </button>
+             </div>
+          </div>
+          
+          {imageType === "url" ? (
+             <input 
+               type="url" 
+               id="avatarUrl" 
+               name="avatarUrl" 
+               defaultValue={!initialData?.avatarUrl?.startsWith("data:image") ? (initialData?.avatarUrl || "") : ""}
+               placeholder="https://example.com/headshot.jpg"
+               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+               onChange={() => {}}
+             />
+          ) : (
+             <div className="space-y-2">
+               <input 
+                 type="file" 
+                 id="avatarUpload" 
+                 name="avatarUpload" 
+                 accept="image/*"
+                 onChange={handleImageUpload}
+                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:pt-1 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+               />
+               {base64Image && (
+                  <p className="text-xs text-primary font-medium">Avatar queued for upload.</p>
+               )}
+             </div>
+          )}
         </div>
       </div>
 
@@ -77,4 +136,3 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
     </form>
   );
 }
-
