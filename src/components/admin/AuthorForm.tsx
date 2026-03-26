@@ -68,7 +68,7 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
           await createAuthor(formData);
         }
       } catch (error) {
-        alert("Failed to save author. Your connection may have been interrupted or the file is still too large.");
+        alert("Error: " + (error?.message || error?.toString() || "Unknown error"));
         console.error(error);
       }
     });
