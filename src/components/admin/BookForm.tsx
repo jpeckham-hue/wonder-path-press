@@ -70,7 +70,7 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
           await createBook(formData);
         }
       } catch (error) {
-        alert("Failed to save book. Your connection may have been interrupted or the file is still too large.");
+        alert("Error: " + ((error as any)?.message || String(error) || "Unknown error"));
         console.error(error);
       }
     });
