@@ -71,6 +71,9 @@ export function BookForm({ initialData = null, authors }: { initialData?: any, a
           await createBook(formData);
         }
       } catch (error) {
+        if ((error as any)?.message?.includes("NEXT_REDIRECT")) {
+          throw error;
+        }
         alert("Error: " + ((error as any)?.message || String(error) || "Unknown error"));
         console.error(error);
       }

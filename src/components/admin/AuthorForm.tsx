@@ -69,6 +69,9 @@ export function AuthorForm({ initialData = null }: { initialData?: any }) {
           await createAuthor(formData);
         }
       } catch (error) {
+        if ((error as any)?.message?.includes("NEXT_REDIRECT")) {
+          throw error;
+        }
         alert("Error: " + ((error as any)?.message || String(error) || "Unknown error"));
         console.error(error);
       }
