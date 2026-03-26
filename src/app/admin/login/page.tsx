@@ -15,13 +15,14 @@ export default function AdminLogin() {
     setError("");
     
     const formData = new FormData(e.currentTarget);
+    const email = formData.get("email");
     const password = formData.get("password");
 
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) {
