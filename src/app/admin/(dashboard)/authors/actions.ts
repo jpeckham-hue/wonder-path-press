@@ -28,7 +28,6 @@ export async function createAuthor(formData: FormData) {
 
   if (!name) throw new Error("Name is required");
 
-  // Log to see how big it is
   console.log("Avatar URL length:", avatarUrl?.length);
 
   try {
@@ -72,7 +71,29 @@ export async function updateAuthor(id: string, formData: FormData) {
 }
 
 export async function deleteAuthor(id: string) {
-  await checkAuth();
-  await prisma.author.delete({ where: { id } });
+  try {
+    await checkAuth();
+  } catch (err) {
+    return { error: "Your session has expired. Please refresh the page and log in again." };
+  }
+  
+  try {
+    // Prevent foreign key constraint errors
+    const booksCount = await prisma.book.count({ where: { authorId: id } });
+    if (booksCount > 0) {
+      return { error: `Wait! This author still has \${booksCount} associated book(s). You must delete or reassign their books before removing them.` };
+    }
+
+    const postsCount = await prisma.post.count({ where: { authorId: id } });
+    if (postsCount > 0) {
+      return { error: `Wait! This author still has \${postsCount} associated blog post(s). You must delete or reassign their posts before removing them.` };
+    }
+
+    await prisma.author.delete({ where: { id } });
+  } catch (err: any) {
+    return { error: "An unexpected database error occurred. Could not delete." };
+  }
+
   revalidatePath("/admin/authors");
+  return { success: true };
 }

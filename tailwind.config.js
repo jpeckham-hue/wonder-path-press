@@ -15,6 +15,23 @@ module.exports = {
     },
     extend: {
       colors: {
+        architect: {
+          100: '#f3f4f6', 
+          300: '#9ca3af',
+          500: '#4b5563',
+          700: '#1f2937',
+          900: '#111827',
+          accent: '#2563eb', // Tech blue
+        },
+        dreamer: {
+          100: '#fffaf0', // Warm white
+          300: '#fde68a', // Soft sunlight
+          500: '#f59e0b',
+          700: '#b45309',
+          900: '#78350f',
+          accent: '#fbcfe8', // Whimsical pink
+        },
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

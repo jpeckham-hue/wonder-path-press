@@ -3,18 +3,25 @@ import { MobileNav } from "./ui/MobileNav";
 
 export function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="font-serif text-2xl font-bold tracking-tight text-primary">
-          Wonder Path Press
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-xl border-b border-black/5 transition-all duration-300">
+      <div className="container mx-auto px-6 h-20 md:h-24 flex items-center justify-between">
+        <Link href="/" className="font-serif text-3xl md:text-4xl font-black tracking-tight text-architect-900 hover:text-architect-500 transition-colors">
+          WONDERPATH
         </Link>
-        <div className="hidden md:flex gap-6 text-sm font-medium text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-          <Link href="/books" className="hover:text-foreground transition-colors">Books</Link>
-          <Link href="/authors" className="hover:text-foreground transition-colors">Authors</Link>
-          <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+        <div className="hidden md:flex items-center gap-10 text-sm font-bold tracking-widest uppercase text-architect-700">
+          <Link href="/books" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-200">Books</Link>
+          <Link href="/authors" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-200">Authors</Link>
+          <Link href="/mission" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-200">Our Mission</Link>
+          <Link href="/blog" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-200">Journal</Link>
         </div>
-        <MobileNav />
+        <div className="hidden md:block">
+          <Link href="/admin/login" className="px-6 py-3 rounded-full bg-architect-900 text-white font-mono text-xs uppercase tracking-widest hover:bg-architect-700 transition-all shadow-md hover:shadow-lg">
+            Hub Login
+          </Link>
+        </div>
+        <div className="md:hidden">
+          <MobileNav />
+        </div>
       </div>
     </nav>
   );

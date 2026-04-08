@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logout } from "@/app/actions/auth";
 import { LayoutDashboard, BookOpen, PenTool, LogOut, Settings, Users } from "lucide-react";
 import clsx from "clsx";
 
@@ -45,7 +46,7 @@ export function AdminSidebar() {
       </nav>
 
       <div className="p-4 border-t">
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors">
+        <button onClick={() => logout()} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors">
           <LogOut size={18} />
           Sign Out
         </button>

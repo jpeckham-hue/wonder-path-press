@@ -85,7 +85,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
 
             <div className={"pt-8 border-t space-y-6"}>
               <div className={"flex items-center justify-between"}>
-                <span className={"text-4xl font-bold text-primary"}>{book.price.toFixed(2)}</span>
+                <span className={"text-4xl font-bold text-primary"}>${book.price.toFixed(2)}</span>
                 <span className={"text-sm font-medium text-muted-foreground uppercase tracking-wider px-3 py-1 bg-muted rounded-md"}>
                   Hardcover
                 </span>

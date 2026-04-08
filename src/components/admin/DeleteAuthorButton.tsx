@@ -9,8 +9,15 @@ export function DeleteAuthorButton({ id }: { id: string }) {
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this author? This cannot be undone.")) {
-      startTransition(() => {
-        deleteAuthor(id);
+      startTransition(async () => {
+        try {
+          const res = await deleteAuthor(id);
+          if (res && res.error) {
+            alert(res.error);
+          }
+        } catch (error: any) {
+          alert("Failed to delete author: Server error.");
+        }
       });
     }
   };
@@ -27,4 +34,3 @@ export function DeleteAuthorButton({ id }: { id: string }) {
     </button>
   );
 }
-

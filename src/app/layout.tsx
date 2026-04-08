@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -47,6 +48,15 @@ export default function RootLayout({
       >
         {children}
         <Analytics />
+        <Script strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-45MBJCEJK1" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-45MBJCEJK1');
+          `}
+        </Script>
       </body>
     </html>
   );

@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
-import type { Book } from "@prisma/client";
+import type { Book, Author } from "@prisma/client";
 
-export function BookCard({ book }: { book: Book }) {
+type BookWithAuthor = Book & { author?: Author };
+
+export function BookCard({ book }: { book: BookWithAuthor }) {
   return (
     <div className={"group flex flex-col bg-card rounded-3xl overflow-hidden border-2 border-transparent hover:border-secondary hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300"}>
       <div className={"relative aspect-[3/4] bg-muted overflow-hidden"}>
@@ -28,7 +30,9 @@ export function BookCard({ book }: { book: Book }) {
               {book.title}
             </h3>
           </Link>
-          <p className={"text-sm font-medium text-muted-foreground"}>Detailed Book View currently unsupported in demo</p>
+          <p className={"text-sm font-medium text-muted-foreground"}>
+            By {book.author ? book.author.name : "Unknown Author"}
+          </p>
         </div>
         
         <p className={"text-muted-foreground text-sm line-clamp-3"}>
@@ -36,7 +40,7 @@ export function BookCard({ book }: { book: Book }) {
         </p>
 
         <div className={"mt-auto pt-4 flex items-center justify-between gap-4"}>
-          <span className={"font-bold text-xl text-primary"}>{book.price.toFixed(2)}</span>
+          <span className={"font-bold text-xl text-primary"}>${book.price.toFixed(2)}</span>
           <a 
             href={book.amazonLink}
             target={"_blank"}

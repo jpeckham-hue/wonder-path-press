@@ -1,82 +1,85 @@
 import Image from "next/image";
 import Link from "next/link";
+import prisma from "@/lib/db";
 
-const AUTHORS = [
-  {
-    id: 1,
-    name: "Elena Vance",
-    role: "Fiction & Fantasy",
-    bio: "Elena serves as the lead architect of worlds unknown. Her stories weave magic with the mundane.",
-    image: "/author-placeholder.png",
-  },
-  {
-    id: 2,
-    name: "Marcus Thorne",
-    role: "Historical Non-Fiction",
-    bio: "Marcus unearths the buried secrets of the past, bringing history to life with vivid detail.",
-    image: "/author-placeholder.png",
-  },
-  {
-    id: 3,
-    name: "Sarah Jenkins",
-    role: "Modern Poetry",
-    bio: "Sarah captures the fleeting moments of modern life in her poignant and accessible verse.",
-    image: "/author-placeholder.png",
-  },
-  {
-    id: 4,
-    name: "Dr. Aris Vane",
-    role: "Science & Philosophy",
-    bio: "Bridging the gap between empirical data and human experience, Dr. Vane challenges how we think.",
-    image: "/author-placeholder.png",
-  },
-];
+export const dynamic = 'force-dynamic';
 
-export default function AuthorsPage() {
+export default async function AuthorsPage() {
+  const authors = await prisma.author.findMany({
+    orderBy: { name: 'asc' }
+  });
+
   return (
-    <div className="min-h-screen bg-background py-16 md:py-24">
-      <div className="container px-4">
-        <div className="max-w-2xl mx-auto text-center mb-16 space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold font-serif text-foreground">Our Authors</h1>
-          <p className="text-lg text-muted-foreground">
-            Meet the voices behind the stories. We curate diverse perspectives from around the globe.
+    <div className="min-h-screen bg-[#fafafa] py-24 md:py-32 selection:bg-architect-accent selection:text-white">
+      <div className="container mx-auto px-6">
+        
+        {/* Header Section */}
+        <div className="max-w-3xl mb-24 space-y-6">
+          <span className="font-mono text-architect-500 uppercase tracking-[0.3em] text-xs font-semibold">The Roster</span>
+          <h1 className="text-5xl md:text-7xl font-bold font-serif text-architect-900 tracking-tight leading-[1.1]">
+            Architects <span className="italic font-light text-architect-500">&</span> Dreamers
+          </h1>
+          <p className="text-xl text-architect-700 leading-relaxed font-sans max-w-2xl">
+            Meet the rigorous thinkers and whimsical creators constructing the worlds within our pages.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {AUTHORS.map((author) => (
-            <div key={author.id} className="group flex flex-col items-center text-center space-y-4">
-              <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-muted group-hover:border-accent transition-colors duration-300">
+        {/* Dynamic Authors Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-24">
+          {authors.map((author) => (
+            <div key={author.id} className="group flex flex-col items-start space-y-8">
+              
+              <div className="relative w-full aspect-[4/5] overflow-hidden border border-black/5 bg-white shadow-xl group-hover:shadow-2xl transition-all duration-500">
                 <Image
-                  src={author.image}
+                  src={author.avatarUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80"}
                   alt={author.name}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover filter grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-700 origin-center"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-architect-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
-              <div className="space-y-2">
-                <h3 className="font-serif text-2xl font-bold text-foreground">{author.name}</h3>
-                <p className="text-sm font-medium text-accent uppercase tracking-wider">{author.role}</p>
-                <p className="text-muted-foreground text-sm leading-relaxed px-2">
-                  {author.bio}
+              
+              <div className="space-y-4 w-full border-b border-architect-100 pb-8">
+                <h3 className="font-serif text-3xl font-bold text-architect-900 group-hover:text-architect-accent transition-colors duration-300">
+                  {author.name}
+                </h3>
+                
+                {/* Fallback Role Text since author.role isn't in db */}
+                <p className="text-xs font-mono text-architect-500 uppercase tracking-[0.2em]">
+                  Author
+                </p>
+                
+                <p className="text-architect-700 text-sm leading-relaxed max-w-md line-clamp-4">
+                  {author.bio || "This author is currently curating their thoughts. A biography will be available soon in our upcoming publication cycles."}
                 </p>
               </div>
             </div>
           ))}
+          
+          {authors.length === 0 && (
+            <div className="col-span-full py-20 text-center text-architect-500 font-mono tracking-widest uppercase">
+              No authors have been curated yet.
+            </div>
+          )}
         </div>
 
-        <div className="mt-24 rounded-2xl bg-muted/30 p-8 md:p-12 text-center space-y-6">
-          <h2 className="text-3xl font-serif font-bold">Join Our Family</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            We are always looking for new voices. If you have a story that wanders off the beaten path, we want to hear it.
+        {/* CTA Footer */}
+        <div className="mt-32 p-12 lg:p-24 bg-architect-900 text-white flex flex-col items-center text-center space-y-8">
+          <span className="font-mono text-architect-300 uppercase tracking-[0.3em] text-xs font-semibold">Join The Cohort</span>
+          <h2 className="text-4xl lg:text-5xl font-serif font-black">Submit a Manuscript</h2>
+          <p className="text-architect-300 text-lg max-w-xl mx-auto font-light">
+            We are continuously evaluating avant-garde voices and methodical researchers. If your story wanders off the beaten path, we invite your submission.
           </p>
-          <Link 
-            href="/contact" 
-            className="inline-block px-8 py-3 bg-primary text-primary-foreground font-medium rounded-full hover:bg-primary/90 transition-colors"
-          >
-            Submit a Manuscript
-          </Link>
+          <div className="pt-8">
+            <Link 
+              href="/contact" 
+              className="px-10 py-5 bg-white text-architect-900 font-mono text-xs uppercase tracking-[0.2em] hover:bg-architect-accent hover:text-white transition-colors duration-300 shadow-xl"
+            >
+              Begin Submissions
+            </Link>
+          </div>
         </div>
+        
       </div>
     </div>
   );

@@ -7,29 +7,30 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
 model Author {
   id        String   @id @default(cuid())
   name      String
   bio       String?
   avatarUrl String?
-  books     Book[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  books     Book[]
   posts     Post[]
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  coverImage  String?
-  published   Boolean  @default(false)
-  authorId    String
-  author      Author   @relation(fields: [authorId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  content    String
+  excerpt    String?
+  coverImage String?
+  published  Boolean  @default(false)
+  authorId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  author     Author   @relation(fields: [authorId], references: [id])
 }
 
 model Book {
@@ -41,11 +42,10 @@ model Book {
   amazonLink  String
   tag         String?
   authorId    String
-  author      Author   @relation(fields: [authorId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  author      Author   @relation(fields: [authorId], references: [id])
 }
-
 
 model User {
   id        String   @id @default(cuid())
