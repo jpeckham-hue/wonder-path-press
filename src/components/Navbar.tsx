@@ -14,11 +14,7 @@ export function Navbar() {
           <Link href="/mission" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-200">Our Mission</Link>
           <Link href="/blog" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-200">Journal</Link>
         </div>
-        <div className="hidden md:block">
-          <Link href="/admin/login" className="px-6 py-3 rounded-full bg-architect-900 text-white font-mono text-xs uppercase tracking-widest hover:bg-architect-700 transition-all shadow-md hover:shadow-lg">
-            Hub Login
-          </Link>
-        </div>
+
         <div className="md:hidden">
           <MobileNav />
         </div>
