@@ -31,7 +31,7 @@ export default async function AuthorsPage() {
               
               <div className="relative w-full aspect-[4/5] overflow-hidden border border-black/5 bg-white shadow-xl group-hover:shadow-2xl transition-all duration-500">
                 <Image
-                  src={author.avatarUrl || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80"}
+                  src={author.avatarUrl || "/author-placeholder.png"}
                   alt={author.name}
                   fill
                   className="object-cover filter grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-700 origin-center"

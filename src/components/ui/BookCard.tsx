@@ -15,7 +15,7 @@ export function BookCard({ book }: { book: BookWithAuthor }) {
           </span>
         )}
         <Image
-          src={book.image}
+          src={book.image || "/book-cover.png"}
           alt={"Cover of " + book.title}
           fill
           sizes={"(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
