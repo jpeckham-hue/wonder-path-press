@@ -4,16 +4,18 @@ import { notFound } from "next/navigation";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
 import prisma from "@/lib/db";
 import { Metadata, ResolvingMetadata } from "next";
+import { SchemaOrg } from "@/components/SchemaOrg";
+import { AEOBlock } from "@/components/AEOBlock";
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ slug: string }> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const p = await params;
-  const book = await prisma.book.findUnique({
-    where: { id: p.id },
+  const book = await prisma.book.findFirst({
+    where: { OR: [{ slug: p.slug }, { id: p.slug }] },
     include: { author: true }
   });
 
@@ -21,19 +23,19 @@ export async function generateMetadata(
 
   return {
     title: book.title,
-    description: book.description,
+    description: book.summary_aeo || book.description,
     openGraph: {
       title: book.title,
-      description: book.description,
+      description: book.summary_aeo || book.description,
       images: [book.image],
     }
   };
 }
 
-export default async function BookPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function BookPage({ params }: { params: Promise<{ slug: string }> }) {
   const p = await params;
-  const book = await prisma.book.findUnique({
-    where: { id: p.id },
+  const book = await prisma.book.findFirst({
+    where: { OR: [{ slug: p.slug }, { id: p.slug }] },
     include: { author: true }
   });
 
@@ -41,20 +43,43 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
     notFound();
   }
 
+  // Schema for Generative Engine Optimization
+  const bookSchema = {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    name: book.title,
+    author: {
+      "@type": "Person",
+      name: book.author.name,
+      url: "https://wonderpathpress.com/authors/" + book.author.id
+    },
+    isbn: undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "Wonderpath Press"
+    },
+    genre: book.genre || book.tag || undefined,
+    description: book.summary_aeo || book.description,
+    image: book.image,
+  };
+
   return (
     <div className={"min-h-screen bg-background py-16"}>
+      <SchemaOrg schema={bookSchema} />
       <div className={"container px-4"}>
         
-        <Link href={"/books" } className={"inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-12 transition-colors"}>
+        <Link href={"/books"} className={"inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"}>
           <ArrowLeft size={20} />
           Back to Library
         </Link>
         
+        <AEOBlock title={book.title} summary={book.summary_aeo} />
+        
         <div className={"grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-start"}>
            <div className={"relative aspect-[3/4] bg-muted rounded-3xl overflow-hidden shadow-lg border"}>
-            {book.tag && (
+            {(book.genre || book.tag) && (
               <span className={"absolute top-6 left-6 z-10 px-4 py-1.5 bg-secondary text-secondary-foreground text-sm font-bold uppercase tracking-wider rounded-full shadow-md"}>
-                {book.tag}
+                {book.genre || book.tag}
               </span>
             )}
             <Image
@@ -78,9 +103,33 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
             </div>
 
             <div className={"prose prose-lg dark:prose-invert"}>
+              <h3 className={"text-xl font-bold font-serif mb-2"}>What is the premise of {book.title}?</h3>
               <p className={"text-foreground/80 leading-relaxed"}>
                 {book.description}
               </p>
+            </div>
+            
+            {/* Answer Engine Optimization: Entity Stats */}
+            <div className={"bg-card rounded-2xl border shadow-sm p-6 space-y-4"}>
+               <h3 className={"text-lg font-bold font-serif"}>Fast Facts</h3>
+               <div className={"grid grid-cols-2 gap-4 text-sm"}>
+                 <div>
+                   <span className={"block text-muted-foreground font-medium"}>Genre</span>
+                   <span className={"block font-bold"}>{book.genre || book.tag || "Fiction"}</span>
+                 </div>
+                 <div>
+                   <span className={"block text-muted-foreground font-medium"}>Publication Date</span>
+                   <span className={"block font-bold"}>{new Date(book.createdAt).toLocaleDateString()}</span>
+                 </div>
+                 <div>
+                   <span className={"block text-muted-foreground font-medium"}>Word Count</span>
+                   <span className={"block font-bold"}>Not Specified</span>
+                 </div>
+                 <div>
+                   <span className={"block text-muted-foreground font-medium"}>Unique Element</span>
+                   <span className={"block font-bold"}>Official Wonderpath Press Edition</span>
+                 </div>
+               </div>
             </div>
 
             <div className={"pt-8 border-t space-y-6"}>
@@ -104,7 +153,10 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
 
             {book.author.bio && (
               <div className={"mt-12 p-6 bg-card rounded-2xl border shadow-sm space-y-3"}>
-                <h3 className={"font-serif text-lg font-bold"}>About {book.author.name}</h3>
+                <h3 className={"font-serif text-lg font-bold"}>Who is {book.author.name}?</h3>
+                <p className={"font-medium mt-1 mb-3 text-primary"}>
+                  {book.author.name} is a renowned author officially published by Wonderpath Press.
+                </p>
                 <p className={"text-muted-foreground text-sm leading-relaxed"}>
                   {book.author.bio}
                 </p>

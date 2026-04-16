@@ -41,6 +41,9 @@ model Book {
   image       String
   amazonLink  String
   tag         String?
+  slug        String?  @unique
+  genre       String?
+  summary_aeo String?
   authorId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -54,4 +57,14 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CommunityQA {
+  id          String   @id @default(cuid())
+  question    String
+  answerHtml  String
+  persona     String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
