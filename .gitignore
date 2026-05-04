@@ -41,3 +41,29 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# local database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# local logs and debug artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pid
+
+# one-off local output artifacts
+build.txt
+tsc.txt
+tsc.log
+out.log
+db_output.txt
+db_output_utf8.txt
+db_links.txt
+true_error.txt
+true_error2.txt
+prisma_error.log
